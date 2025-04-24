@@ -1,13 +1,22 @@
 import { useRequests } from '../context/RequestContext'
 
 export const Closed = () => {
-  const { requests } = useRequests()
-  const closedRequests = requests.filter(r => r.status === 'closed')
+  const { getVisibleRequests, currentUser, isAdmin } = useRequests()
+  const allRequests = getVisibleRequests()
+  const closedRequests = allRequests.filter(r => r.status === 'closed')
+  const isAdminUser = isAdmin()
 
   return (
     <div className="flex flex-col h-screen pb-16">
       <div className="bg-white p-4 shadow-sm">
-        <h1 className="text-xl font-bold">Закрытые заявки</h1>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-xl font-bold">Закрытые заявки</h1>
+            <p className="text-sm text-gray-600">
+              {currentUser?.name} - {isAdminUser ? 'Администратор' : 'Менеджер'}
+            </p>
+          </div>
+        </div>
       </div>
       <div className="bg-white shadow-sm flex-1 overflow-y-auto">
         <div className="divide-y">
@@ -23,6 +32,15 @@ export const Closed = () => {
                 <p>Груз: {request.cargo_type}</p>
                 <p>Маршрут: {request.from_location} → {request.to_location}</p>
                 <p>Дата закрытия: {new Date(request.unloading_date || '').toLocaleDateString()}</p>
+                {isAdminUser && (
+                  <>
+                    <p className="mt-2 font-semibold">Финансы:</p>
+                    <p>Наша цена: {request.our_price} сом</p>
+                    <p>Цена водителя: {request.driver_price} сом</p>
+                    <p>Налог: {request.tax} сом</p>
+                    <p>Комиссия офиса: {request.office_commission} сом</p>
+                  </>
+                )}
               </div>
             </div>
           ))}

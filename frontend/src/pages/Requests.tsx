@@ -19,16 +19,21 @@ interface Request {
 
 export const Requests = () => {
   const [showNewRequestForm, setShowNewRequestForm] = useState(false)
-  const { requests, addRequest, closeRequest, cancelRequest } = useRequests()
+  const { getVisibleRequests, addRequest, closeRequest, cancelRequest, currentUser, isAdmin } = useRequests()
 
-  const activeRequests = requests.filter(r => r.status === 'active')
-  const closedRequests = requests.filter(r => r.status === 'closed')
+  const allRequests = getVisibleRequests()
+  const activeRequests = allRequests.filter(r => r.status === 'active')
+  const closedRequests = allRequests.filter(r => r.status === 'closed')
 
   return (
     <div className="flex flex-col h-screen pb-16">
-      <WelcomeHeader onAddClick={() => setShowNewRequestForm(true)} />
+      <WelcomeHeader 
+        onAddClick={() => setShowNewRequestForm(true)} 
+        userName={currentUser?.name || ''}
+        isAdmin={isAdmin()}
+      />
       <RequestStats
-        total={requests.length}
+        total={allRequests.length}
         active={activeRequests.length}
         closed={closedRequests.length}
       />
@@ -36,6 +41,7 @@ export const Requests = () => {
         requests={activeRequests}
         onRequestClose={closeRequest}
         onRequestCancel={cancelRequest}
+        isAdmin={isAdmin()}
       />
       
       {showNewRequestForm && (
