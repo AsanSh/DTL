@@ -2,6 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const path = require('path');
+const requestRoutes = require('./routes/requestRoutes');
+const userRoutes = require('./routes/userRoutes');
+const exportRoutes = require('./routes/exportRoutes');
 
 const app = express();
 const port = 4000;
@@ -36,6 +39,10 @@ app.post('/api/requests', (req, res) => {
   console.log('Received request data:', req.body);
   res.json({ success: true, data: req.body });
 });
+
+app.use('/api', requestRoutes);
+app.use('/api', userRoutes);
+app.use('/api', exportRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

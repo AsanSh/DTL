@@ -49,9 +49,18 @@ interface RequestContextType {
   register: (userData: Omit<User, 'id' | 'role' | 'status' | 'registrationDate'>) => Promise<void>
   approveUser: (userId: number) => void
   rejectUser: (userId: number) => void
+  exportToGoogleSheets: () => Promise<string>
 }
 
 const RequestContext = createContext<RequestContextType | undefined>(undefined)
+
+export function useRequests() {
+  const context = useContext(RequestContext)
+  if (!context) {
+    throw new Error('useRequests must be used within a RequestProvider')
+  }
+  return context
+}
 
 export const RequestProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Инициализируем состояния из localStorage
@@ -306,31 +315,48 @@ export const RequestProvider: React.FC<{ children: React.ReactNode }> = ({ child
     })
   }
 
+  const exportToGoogleSheets = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/api/export', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ requests }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to export data');
+      }
+
+      const data = await response.json();
+      return data.spreadsheetUrl;
+    } catch (error) {
+      console.error('Error exporting to Google Sheets:', error);
+      throw error;
+    }
+  };
+
+  const contextValue: RequestContextType = {
+    requests,
+    currentUser,
+    pendingUsers,
+    isAdmin,
+    getVisibleRequests,
+    addRequest,
+    closeRequest,
+    cancelRequest,
+    login,
+    logout,
+    register,
+    approveUser,
+    rejectUser,
+    exportToGoogleSheets
+  }
+
   return (
-    <RequestContext.Provider value={{
-      requests,
-      currentUser,
-      pendingUsers,
-      isAdmin,
-      getVisibleRequests,
-      addRequest,
-      closeRequest,
-      cancelRequest,
-      login,
-      logout,
-      register,
-      approveUser,
-      rejectUser
-    }}>
+    <RequestContext.Provider value={contextValue}>
       {children}
     </RequestContext.Provider>
   )
-}
-
-export const useRequests = () => {
-  const context = useContext(RequestContext)
-  if (context === undefined) {
-    throw new Error('useRequests must be used within a RequestProvider')
-  }
-  return context
 } 

@@ -1,4 +1,5 @@
 import { useRequests } from '../context/RequestContext'
+import { useState } from 'react'
 
 interface ManagerStats {
   name: string
@@ -11,7 +12,23 @@ interface ManagerStats {
 }
 
 export const Analytics = () => {
-  const { requests, currentUser } = useRequests()
+  const { requests, currentUser, exportToGoogleSheets } = useRequests()
+  const [isExporting, setIsExporting] = useState(false)
+  const [exportError, setExportError] = useState<string | null>(null)
+
+  const handleExport = async () => {
+    try {
+      setIsExporting(true)
+      setExportError(null)
+      const url = await exportToGoogleSheets()
+      window.open(url, '_blank')
+    } catch (error) {
+      setExportError('Ошибка при экспорте данных')
+      console.error('Export error:', error)
+    } finally {
+      setIsExporting(false)
+    }
+  }
 
   // Получаем список всех менеджеров и их статистику
   const managerStats = requests.reduce<{ [key: number]: ManagerStats }>((acc, request) => {
@@ -64,10 +81,28 @@ export const Analytics = () => {
   return (
     <div className="min-h-screen pb-16">
       <div className="bg-white p-4 shadow-sm">
-        <h1 className="text-xl font-bold">Аналитика</h1>
-        <p className="text-sm text-gray-600">
-          {currentUser?.name} - Администратор
-        </p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-xl font-bold">Аналитика</h1>
+            <p className="text-sm text-gray-600">
+              {currentUser?.name} - Администратор
+            </p>
+          </div>
+          <button
+            onClick={handleExport}
+            disabled={isExporting}
+            className={`px-4 py-2 rounded-lg text-white font-medium ${
+              isExporting 
+                ? 'bg-blue-400 cursor-not-allowed' 
+                : 'bg-blue-600 hover:bg-blue-700'
+            }`}
+          >
+            {isExporting ? 'Экспорт...' : 'Экспорт в Google Sheets'}
+          </button>
+        </div>
+        {exportError && (
+          <p className="mt-2 text-sm text-red-600">{exportError}</p>
+        )}
       </div>
 
       <div className="p-4 space-y-6">
