@@ -249,7 +249,7 @@ const Analytics: React.FC = () => {
       {/* Summary Cards */}
       {analyticsData && (
         <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={3} component="div">
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom>
@@ -262,7 +262,7 @@ const Analytics: React.FC = () => {
             </Card>
           </Grid>
           
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={3} component="div">
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom>
@@ -275,7 +275,7 @@ const Analytics: React.FC = () => {
             </Card>
           </Grid>
           
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={3} component="div">
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom>
@@ -288,7 +288,7 @@ const Analytics: React.FC = () => {
             </Card>
           </Grid>
           
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={3} component="div">
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom>
@@ -388,7 +388,7 @@ const Analytics: React.FC = () => {
         <Box sx={{ height: 400 }}>
           {analyticsData && analyticsData.monthly_data.length > 0 ? (
             <Grid container spacing={2}>
-              <Grid item xs={12} md={7}>
+              <Grid item xs={12} md={7} component="div">
                 <Bar 
                   data={getDriverPerformanceData()} 
                   options={{
@@ -405,7 +405,7 @@ const Analytics: React.FC = () => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} md={5}>
+              <Grid item xs={12} md={5} component="div">
                 <Pie 
                   data={getDriverPerformanceData()}
                   options={{
