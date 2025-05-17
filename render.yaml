@@ -11,7 +11,7 @@ services:
       - key: REACT_APP_API_URL
         value: https://logistika-backend.onrender.com/api
       - key: REACT_APP_TELEGRAM_BOT_TOKEN
-        value: 7886092766:AAFvstlp7KQWJU-79MvyXQCHNqxnk-t10fQ
+        sync: false # This will be set in Render environment variables for security
     routes:
       - type: rewrite
         source: /*
