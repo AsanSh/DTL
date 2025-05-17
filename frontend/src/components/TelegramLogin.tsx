@@ -37,8 +37,7 @@ const TelegramLogin: React.FC<TelegramLoginProps> = ({
   onAuthCallback,
   buttonColor = '#0088cc'
 }) => {
-  const auth = useAuth();
-  const { telegramAuth } = auth;
+  const { telegramAuth } = useAuth();
   const scriptRef = useRef<HTMLScriptElement | null>(null);
   const buttonRef = useRef<HTMLDivElement | null>(null);
 

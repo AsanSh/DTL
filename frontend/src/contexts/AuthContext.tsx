@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { safeCreateContext, safeUseContext } from '../core-libraries-fix';
+import React, { useState, useEffect, useMemo, createContext, useContext } from 'react';
 import { authAPI, userAPI } from '../api/api';
 import { AuthContextType } from './types';
 
 // Создаем контекст с начальным значением
-const AuthContext = safeCreateContext<AuthContextType>({
+const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   user: null,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -202,6 +201,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 // Создаем безопасный хук, который не будет вызывать ошибку с null контекстом
 export const useAuth = (): AuthContextType => {
-  // Используем нашу безопасную обертку
-  return safeUseContext(AuthContext);
+  // Используем стандартный useContext из React
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 }; 
