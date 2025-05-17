@@ -249,52 +249,52 @@ const Analytics: React.FC = () => {
       {/* Summary Cards */}
       {analyticsData && (
         <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={6} md={3} component="div">
+          <Grid item xs={12} sm={6} md={3}>
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom>
                   Total Requests
                 </Typography>
-                <Typography variant="h5" component="div">
+                <Typography variant="h5">
                   {analyticsData.total_requests}
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
           
-          <Grid item xs={12} sm={6} md={3} component="div">
+          <Grid item xs={12} sm={6} md={3}>
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom>
                   Completed Requests
                 </Typography>
-                <Typography variant="h5" component="div">
+                <Typography variant="h5">
                   {analyticsData.completed_requests}
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
           
-          <Grid item xs={12} sm={6} md={3} component="div">
+          <Grid item xs={12} sm={6} md={3}>
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom>
                   Total Cargo Weight
                 </Typography>
-                <Typography variant="h5" component="div">
+                <Typography variant="h5">
                   {analyticsData.total_cargo_weight} kg
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
           
-          <Grid item xs={12} sm={6} md={3} component="div">
+          <Grid item xs={12} sm={6} md={3}>
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom>
                   Average Delivery Time
                 </Typography>
-                <Typography variant="h5" component="div">
+                <Typography variant="h5">
                   {analyticsData.avg_delivery_time} days
                 </Typography>
               </CardContent>
@@ -388,7 +388,7 @@ const Analytics: React.FC = () => {
         <Box sx={{ height: 400 }}>
           {analyticsData && analyticsData.monthly_data.length > 0 ? (
             <Grid container spacing={2}>
-              <Grid item xs={12} md={7} component="div">
+              <Grid item xs={12} md={7}>
                 <Bar 
                   data={getDriverPerformanceData()} 
                   options={{
@@ -405,7 +405,7 @@ const Analytics: React.FC = () => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} md={5} component="div">
+              <Grid item xs={12} md={5}>
                 <Pie 
                   data={getDriverPerformanceData()}
                   options={{
