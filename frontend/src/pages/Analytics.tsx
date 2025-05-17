@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Typography, Box, CircularProgress, Paper,
-  Card, CardContent, Grid, Divider, Button,
+  Card, CardContent, Grid as MuiGrid,
   ButtonGroup, MenuItem, Select, FormControl,
-  InputLabel, SelectChangeEvent
+  InputLabel, SelectChangeEvent, Button
 } from '@mui/material';
 import {
   Chart as ChartJS,
@@ -248,8 +248,8 @@ const Analytics: React.FC = () => {
       
       {/* Summary Cards */}
       {analyticsData && (
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={6} md={3}>
+        <MuiGrid container spacing={3} sx={{ mb: 4 }}>
+          <MuiGrid xs={12} sm={6} md={3}>
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom>
@@ -260,9 +260,9 @@ const Analytics: React.FC = () => {
                 </Typography>
               </CardContent>
             </Card>
-          </Grid>
+          </MuiGrid>
           
-          <Grid item xs={12} sm={6} md={3}>
+          <MuiGrid xs={12} sm={6} md={3}>
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom>
@@ -273,9 +273,9 @@ const Analytics: React.FC = () => {
                 </Typography>
               </CardContent>
             </Card>
-          </Grid>
+          </MuiGrid>
           
-          <Grid item xs={12} sm={6} md={3}>
+          <MuiGrid xs={12} sm={6} md={3}>
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom>
@@ -286,9 +286,9 @@ const Analytics: React.FC = () => {
                 </Typography>
               </CardContent>
             </Card>
-          </Grid>
+          </MuiGrid>
           
-          <Grid item xs={12} sm={6} md={3}>
+          <MuiGrid xs={12} sm={6} md={3}>
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom>
@@ -299,8 +299,8 @@ const Analytics: React.FC = () => {
                 </Typography>
               </CardContent>
             </Card>
-          </Grid>
-        </Grid>
+          </MuiGrid>
+        </MuiGrid>
       )}
       
       {/* Filters and Chart Type Controls */}
@@ -387,8 +387,8 @@ const Analytics: React.FC = () => {
         </Typography>
         <Box sx={{ height: 400 }}>
           {analyticsData && analyticsData.monthly_data.length > 0 ? (
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={7}>
+            <MuiGrid container spacing={2}>
+              <MuiGrid xs={12} md={7}>
                 <Bar 
                   data={getDriverPerformanceData()} 
                   options={{
@@ -404,8 +404,8 @@ const Analytics: React.FC = () => {
                     }
                   }}
                 />
-              </Grid>
-              <Grid item xs={12} md={5}>
+              </MuiGrid>
+              <MuiGrid xs={12} md={5}>
                 <Pie 
                   data={getDriverPerformanceData()}
                   options={{
@@ -421,8 +421,8 @@ const Analytics: React.FC = () => {
                     }
                   }}
                 />
-              </Grid>
-            </Grid>
+              </MuiGrid>
+            </MuiGrid>
           ) : (
             <Box display="flex" justifyContent="center" alignItems="center" height="100%">
               <Typography color="textSecondary">No driver performance data available</Typography>
