@@ -159,11 +159,6 @@ const TelegramLogin: React.FC<TelegramLoginProps> = ({
   );
 };
 
-// Добавляем глобальную функцию для Telegram Login виджета
-declare global {
-  interface Window {
-    TelegramLoginCallback: (user: TelegramUser) => void;
-  }
-}
+// Window interface is already declared in typescript-fix.d.ts
 
 export default TelegramLogin; 
