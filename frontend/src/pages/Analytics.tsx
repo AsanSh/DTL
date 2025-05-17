@@ -249,7 +249,7 @@ const Analytics: React.FC = () => {
       {/* Summary Cards */}
       {analyticsData && (
         <MuiGrid container spacing={3} sx={{ mb: 4 }}>
-          <MuiGrid xs={12} sm={6} md={3}>
+          <MuiGrid item xs={12} sm={6} md={3}>
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom>
@@ -262,7 +262,7 @@ const Analytics: React.FC = () => {
             </Card>
           </MuiGrid>
           
-          <MuiGrid xs={12} sm={6} md={3}>
+          <MuiGrid item xs={12} sm={6} md={3}>
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom>
@@ -275,7 +275,7 @@ const Analytics: React.FC = () => {
             </Card>
           </MuiGrid>
           
-          <MuiGrid xs={12} sm={6} md={3}>
+          <MuiGrid item xs={12} sm={6} md={3}>
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom>
@@ -288,7 +288,7 @@ const Analytics: React.FC = () => {
             </Card>
           </MuiGrid>
           
-          <MuiGrid xs={12} sm={6} md={3}>
+          <MuiGrid item xs={12} sm={6} md={3}>
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom>
@@ -388,7 +388,7 @@ const Analytics: React.FC = () => {
         <Box sx={{ height: 400 }}>
           {analyticsData && analyticsData.monthly_data.length > 0 ? (
             <MuiGrid container spacing={2}>
-              <MuiGrid xs={12} md={7}>
+              <MuiGrid item xs={12} md={7}>
                 <Bar 
                   data={getDriverPerformanceData()} 
                   options={{
@@ -405,7 +405,7 @@ const Analytics: React.FC = () => {
                   }}
                 />
               </MuiGrid>
-              <MuiGrid xs={12} md={5}>
+              <MuiGrid item xs={12} md={5}>
                 <Pie 
                   data={getDriverPerformanceData()}
                   options={{
