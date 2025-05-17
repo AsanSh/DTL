@@ -54,6 +54,10 @@ interface AnalyticsData {
     total_cargos: number;
   };
   monthly_data: MonthlyData[];
+  total_requests: number;
+  completed_requests: number;
+  total_cargo_weight: number;
+  avg_delivery_time: number;
 }
 
 const Analytics: React.FC = () => {
@@ -75,10 +79,12 @@ const Analytics: React.FC = () => {
         
         // Extract available years from data
         if (response.data.monthly_data.length > 0) {
-          const years = [...new Set(response.data.monthly_data.map((item: MonthlyData) => item.year))];
-          setYearOptions(years.sort((a, b) => b - a)); // Sort descending
+          // Using Array.from instead of spread operator to avoid TypeScript target compatibility issues
+          const yearSet = new Set(response.data.monthly_data.map((item: MonthlyData) => item.year));
+          const years = Array.from(yearSet) as number[];
+          setYearOptions(years.sort((a: number, b: number) => b - a)); // Sort descending
           if (years.length > 0) {
-            setSelectedYear(years[0]); // Default to most recent year
+            setSelectedYear(years[0] as number); // Default to most recent year
           }
         }
       } catch (error) {
@@ -247,23 +253,10 @@ const Analytics: React.FC = () => {
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom>
-                  Total Revenue
+                  Total Requests
                 </Typography>
-                <Typography variant="h4">
-                  ${analyticsData.organization.total_amount.toFixed(2)}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent>
-                <Typography color="textSecondary" gutterBottom>
-                  Total Cargos
-                </Typography>
-                <Typography variant="h4">
-                  {analyticsData.organization.total_cargos}
+                <Typography variant="h5" component="div">
+                  {analyticsData.total_requests}
                 </Typography>
               </CardContent>
             </Card>
@@ -273,12 +266,10 @@ const Analytics: React.FC = () => {
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom>
-                  Avg Revenue per Cargo
+                  Completed Requests
                 </Typography>
-                <Typography variant="h4">
-                  ${analyticsData.organization.total_cargos > 0 
-                    ? (analyticsData.organization.total_amount / analyticsData.organization.total_cargos).toFixed(2) 
-                    : '0.00'}
+                <Typography variant="h5" component="div">
+                  {analyticsData.completed_requests}
                 </Typography>
               </CardContent>
             </Card>
@@ -288,12 +279,23 @@ const Analytics: React.FC = () => {
             <Card>
               <CardContent>
                 <Typography color="textSecondary" gutterBottom>
-                  Active Drivers
+                  Total Cargo Weight
                 </Typography>
-                <Typography variant="h4">
-                  {new Set(analyticsData.monthly_data
-                    .filter(item => item.driver.id !== null)
-                    .map(item => item.driver.id)).size}
+                <Typography variant="h5" component="div">
+                  {analyticsData.total_cargo_weight} kg
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          
+          <Grid item xs={12} sm={6} md={3}>
+            <Card>
+              <CardContent>
+                <Typography color="textSecondary" gutterBottom>
+                  Average Delivery Time
+                </Typography>
+                <Typography variant="h5" component="div">
+                  {analyticsData.avg_delivery_time} days
                 </Typography>
               </CardContent>
             </Card>
@@ -391,10 +393,13 @@ const Analytics: React.FC = () => {
                   data={getDriverPerformanceData()} 
                   options={{
                     responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                      y: {
-                        beginAtZero: true
+                    plugins: {
+                      legend: {
+                        position: 'top',
+                      },
+                      title: {
+                        display: true,
+                        text: 'Driver Performance'
                       }
                     }
                   }}
@@ -405,7 +410,15 @@ const Analytics: React.FC = () => {
                   data={getDriverPerformanceData()}
                   options={{
                     responsive: true,
-                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: {
+                        position: 'top',
+                      },
+                      title: {
+                        display: true,
+                        text: 'Deliveries by Driver'
+                      }
+                    }
                   }}
                 />
               </Grid>
