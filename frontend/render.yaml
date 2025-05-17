@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: logistika-frontend
+    runtime: static
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./build
+    envVars:
+      - key: NODE_VERSION
+        value: 18.x
+      - key: REACT_APP_API_URL
+        value: https://logistika-backend.onrender.com/api
+      - key: REACT_APP_TELEGRAM_BOT_TOKEN
+        value: 7886092766:AAFvstlp7KQWJU-79MvyXQCHNqxnk-t10fQ
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html 

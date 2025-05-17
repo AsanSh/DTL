@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/api';
+// Use environment variable or fallback to localhost for development
+const API_URL = process.env.REACT_APP_API_URL || 'https://logistika-backend.onrender.com/api';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -66,6 +67,9 @@ export const authAPI = {
   
   refreshToken: (refreshToken: string) => 
     api.post('/token/refresh/', { refresh: refreshToken }),
+    
+  telegramAuth: (telegramData: any) =>
+    api.post('/telegram-auth/', telegramData),
 };
 
 // User API
