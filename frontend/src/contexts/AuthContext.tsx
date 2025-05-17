@@ -1,18 +1,24 @@
-import React, { createContext, useState, useEffect, useMemo, useContext } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { safeCreateContext, safeUseContext } from '../core-libraries-fix';
 import { authAPI, userAPI } from '../api/api';
+import { AuthContextType } from './types';
 
-interface AuthContextType {
-  isAuthenticated: boolean;
-  user: any | null;
-  login: (username: string, password: string) => Promise<void>;
-  register: (userData: any) => Promise<void>;
-  logout: () => void;
-  loading: boolean;
-  error: string | null;
-}
+// Создаем контекст с начальным значением
+const AuthContext = safeCreateContext<AuthContextType>({
+  isAuthenticated: false,
+  user: null,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  login: async (username: string, password: string) => {},
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  register: async (userData: any) => {},
+  logout: () => {},
+  loading: false,
+  error: null,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  telegramAuth: async (telegramData: any) => {}
+});
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
+// Создаем провайдер контекста
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<any | null>(null);
@@ -30,6 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser(response.data);
           setIsAuthenticated(true);
         } catch (err) {
+          console.error('Auth check failed:', err);
           // If error, clear tokens
           localStorage.removeItem('token');
           localStorage.removeItem('refreshToken');
@@ -45,16 +52,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     setError(null);
     try {
+      console.log('Login attempt with username:', username);
       const response = await authAPI.login(username, password);
+      console.log('Login successful, storing tokens');
       localStorage.setItem('token', response.data.access);
       localStorage.setItem('refreshToken', response.data.refresh);
       
       // Get user data
-      const userResponse = await userAPI.getCurrentUser();
-      setUser(userResponse.data);
-      setIsAuthenticated(true);
+      try {
+        console.log('Fetching user data');
+        const userResponse = await userAPI.getCurrentUser();
+        setUser(userResponse.data);
+        setIsAuthenticated(true);
+        console.log('User data received:', userResponse.data);
+      } catch (userError: any) {
+        console.error('Failed to get user data:', userError);
+        setError('Successfully authenticated but failed to get user data');
+        throw userError;
+      }
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Login failed');
+      console.error('Login error:', err);
+      if (err.response) {
+        console.error('Response status:', err.response.status);
+        console.error('Response data:', err.response.data);
+        
+        if (err.response.data && err.response.data.detail) {
+          setError(err.response.data.detail);
+        } else {
+          setError('Login failed. Please check your credentials.');
+        }
+      } else if (err.request) {
+        console.error('No response received:', err.request);
+        setError('Server not responding. Please try again later.');
+      } else {
+        console.error('Error message:', err.message);
+        setError('An unexpected error occurred.');
+      }
       throw err;
     } finally {
       setLoading(false);
@@ -65,9 +98,78 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     setError(null);
     try {
-      await authAPI.register(userData);
+      console.log('Registering user with data:', { 
+        username: userData.username, 
+        email: userData.email,
+        role: userData.role
+      });
+      
+      const response = await authAPI.register(userData);
+      console.log('Registration successful:', response.data);
+      return response.data;
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Registration failed');
+      console.error('Registration error:', err);
+      
+      if (err.response) {
+        console.error('Response status:', err.response.status);
+        console.error('Response data:', err.response.data);
+        
+        if (err.response.data && err.response.data.detail) {
+          setError(err.response.data.detail);
+        } else {
+          setError('Registration failed. Please check your input and try again.');
+        }
+      } else if (err.request) {
+        console.error('No response received:', err.request);
+        setError('Server not responding. Please try again later.');
+      } else {
+        console.error('Error message:', err.message);
+        setError('An unexpected error occurred.');
+      }
+      
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const telegramAuth = async (telegramData: any) => {
+    setLoading(true);
+    setError(null);
+    try {
+      console.log('Authenticating with Telegram:', telegramData);
+      const response = await authAPI.telegramAuth(telegramData);
+      
+      // Store tokens
+      localStorage.setItem('token', response.data.access);
+      localStorage.setItem('refreshToken', response.data.refresh);
+      
+      // Set user data
+      setUser(response.data.user);
+      setIsAuthenticated(true);
+      
+      console.log('Telegram auth successful:', response.data);
+      return response.data;
+    } catch (err: any) {
+      console.error('Telegram auth error:', err);
+      
+      if (err.response) {
+        console.error('Response status:', err.response.status);
+        console.error('Response data:', err.response.data);
+        
+        if (err.response.data && err.response.data.detail) {
+          setError(err.response.data.detail);
+        } else {
+          setError('Telegram authentication failed. Please try again.');
+        }
+      } else if (err.request) {
+        console.error('No response received:', err.request);
+        setError('Server not responding. Please try again later.');
+      } else {
+        console.error('Error message:', err.message);
+        setError('An unexpected error occurred.');
+      }
+      
       throw err;
     } finally {
       setLoading(false);
@@ -90,6 +192,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       logout,
       loading,
       error,
+      telegramAuth,
     }),
     [isAuthenticated, user, loading, error]
   );
@@ -97,10 +200,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
+// Создаем безопасный хук, который не будет вызывать ошибку с null контекстом
 export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+  // Используем нашу безопасную обертку
+  return safeUseContext(AuthContext);
 }; 

@@ -3,7 +3,7 @@ import { Button, Box, Typography } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
 
 // Создаем свой тип для Telegram API вместо расширения window
-type TelegramUser = {
+export type TelegramUser = {
   id: string;
   first_name?: string;
   last_name?: string;
@@ -37,7 +37,8 @@ const TelegramLogin: React.FC<TelegramLoginProps> = ({
   onAuthCallback,
   buttonColor = '#0088cc'
 }) => {
-  const { telegramAuth } = useAuth();
+  const auth = useAuth();
+  const { telegramAuth } = auth;
   const scriptRef = useRef<HTMLScriptElement | null>(null);
   const buttonRef = useRef<HTMLDivElement | null>(null);
 
